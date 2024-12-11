@@ -37,11 +37,12 @@ public class Livro {
     @Column(name = "genero", length = 30, nullable = false)
     private GeneroLivro genero;
 
-    @Column(name = "preco", precision = 18, scale = 2)
+    @Column(name = "preco", precision = 18, scale = 2 )
     private BigDecimal preco;
 
     @ManyToOne(
-//            cascade = CascadeType.ALL,
+//        cascade = CascadeType.ALL
+//        fetch = FetchType.EAGER
         fetch = FetchType.LAZY
     )
     @JoinColumn(name = "id_autor")

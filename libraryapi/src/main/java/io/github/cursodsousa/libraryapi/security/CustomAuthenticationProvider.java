@@ -31,9 +31,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String senhaCriptografada = usuarioEncontrado.getSenha();
 
-        boolean senhamBatem = encoder.matches(senhaDigitada, senhaCriptografada);
+        boolean senhasBatem = encoder.matches(senhaDigitada, senhaCriptografada);
 
-        if(senhamBatem){
+        if(senhasBatem){
             return new CustomAuthentication(usuarioEncontrado);
         }
 

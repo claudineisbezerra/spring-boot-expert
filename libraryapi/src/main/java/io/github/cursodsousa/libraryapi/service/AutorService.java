@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AutorService {
 
-    private final AutorRepository repository;
+    private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
     private final SecurityService securityService;
@@ -29,7 +29,7 @@ public class AutorService {
         validator.validar(autor);
         Usuario usuario = securityService.obterUsuarioLogado();
         autor.setUsuario(usuario);
-        return repository.save(autor);
+        return autorRepository.save(autor);
     }
 
     public void atualizar(Autor autor){
@@ -37,11 +37,11 @@ public class AutorService {
             throw new IllegalArgumentException("Para atualizar, é necessário que o autor já esteja salvo na base.");
         }
         validator.validar(autor);
-        repository.save(autor);
+        autorRepository.save(autor);
     }
 
     public Optional<Autor> obterPorId(UUID id){
-        return repository.findById(id);
+        return autorRepository.findById(id);
     }
 
     public void deletar(Autor autor){
@@ -49,23 +49,23 @@ public class AutorService {
             throw new OperacaoNaoPermitidaException(
                     "Não é permitido excluir um Autor que possui livros cadastrados!");
         }
-        repository.delete(autor);
+        autorRepository.delete(autor);
     }
 
     public List<Autor> pesquisa(String nome, String nacionalidade){
         if(nome != null && nacionalidade != null){
-            return repository.findByNomeAndNacionalidade(nome, nacionalidade);
+            return autorRepository.findByNomeAndNacionalidade(nome, nacionalidade);
         }
 
         if(nome != null){
-            return repository.findByNome(nome);
+            return autorRepository.findByNome(nome);
         }
 
         if(nacionalidade != null){
-            return repository.findByNacionalidade(nacionalidade);
+            return autorRepository.findByNacionalidade(nacionalidade);
         }
 
-        return repository.findAll();
+        return autorRepository.findAll();
     }
 
     public List<Autor> pesquisaByExample(String nome, String nacionalidade){
@@ -80,7 +80,7 @@ public class AutorService {
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         Example<Autor> autorExample = Example.of(autor, matcher);
-        return repository.findAll(autorExample);
+        return autorRepository.findAll(autorExample);
     }
 
     public boolean possuiLivro(Autor autor){

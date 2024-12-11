@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ import static io.github.cursodsousa.libraryapi.repository.specs.LivroSpecs.*;
 @RequiredArgsConstructor
 public class LivroService {
 
-    private final LivroRepository repository;
+    private final LivroRepository livroRepository;
     private final LivroValidator validator;
     private final SecurityService securityService;
 
@@ -31,15 +30,15 @@ public class LivroService {
         validator.validar(livro);
         Usuario usuario = securityService.obterUsuarioLogado();
         livro.setUsuario(usuario);
-        return repository.save(livro);
+        return livroRepository.save(livro);
     }
 
     public Optional<Livro> obterPorId(UUID id){
-        return repository.findById(id);
+        return livroRepository.findById(id);
     }
 
     public void deletar(Livro livro){
-        repository.delete(livro);
+        livroRepository.delete(livro);
     }
 
      //isbn, titulo, nome autor, genero, ano de publicação
@@ -86,7 +85,7 @@ public class LivroService {
 
         Pageable pageRequest = PageRequest.of(pagina, tamanhoPagina);
 
-        return repository.findAll(specs, pageRequest);
+        return livroRepository.findAll(specs, pageRequest);
     }
 
     public void atualizar(Livro livro) {
@@ -95,6 +94,6 @@ public class LivroService {
         }
 
         validator.validar(livro);
-        repository.save(livro);
+        livroRepository.save(livro);
     }
 }

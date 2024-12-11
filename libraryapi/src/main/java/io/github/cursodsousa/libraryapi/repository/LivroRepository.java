@@ -25,7 +25,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecific
 
     Page<Livro> findByAutor(Autor autor, Pageable pageable);
 
-    // Query Method
+    // Query Methods
     // select * from livro where id_autor = id
     List<Livro> findByAutor(Autor autor);
 
@@ -45,7 +45,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecific
     List<Livro> findByDataPublicacaoBetween(LocalDate inicio, LocalDate fim);
 
     // JPQL -> referencia as entidades e as propriedades
-    // select l.* from livro as l order by l.titulo
+    // select l.* from livro as l order by l.titulo, l.preco
     @Query(" select l from Livro as l order by l.titulo, l.preco ")
     List<Livro> listarTodosOrdenadoPorTituloAndPreco();
 

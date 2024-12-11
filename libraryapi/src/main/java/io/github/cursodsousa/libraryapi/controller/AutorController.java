@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("autores")
+@RequestMapping("autores") // http://localhost:8080/autores
 @RequiredArgsConstructor
 @Tag(name = "Autores")
 @Slf4j
@@ -44,6 +44,7 @@ public class AutorController implements GenericController {
 
         Autor autor = mapper.toEntity(dto);
         service.salvar(autor);
+
         URI location = gerarHeaderLocation(autor.getId());
         return ResponseEntity.created(location).build();
     }
@@ -66,7 +67,7 @@ public class AutorController implements GenericController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // indempontente
+    // idempotente
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('GERENTE')")
     @Operation(summary = "Deletar", description = "Deleta um autor existente")

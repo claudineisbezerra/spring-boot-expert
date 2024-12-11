@@ -1,0 +1,20 @@
+#Empacotar aplicação Java com o Maven (Gerar pacote .jar):
+./mvnw clean package -DskipTests
+
+#Executar aplicação Java de forma iterativa:
+java -jar ./target/libraryapi-0.0.1-SNAPSHOT.jar
+
+#Executar aplicação Java de forma detachada (em segundo plano):
+nohup java -jar ./target/libraryapi-0.0.1-SNAPSHOT.jar &
+
+#Executar aplicação Java com o Maven:
+./mvnw spring-boot:run
+
+#Executar aplicação Java com o Maven (com profile):
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+#Executar aplicação Java com o Maven (com profile e variáveis de ambiente):
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -DDATASOURCE_URL=jdbc:postgresql://localhost:5432/library -DDATASOURCE_USERNAME=postgres -DDATASOURCE_PASSWORD=postgres
+
+#Executar aplicação Java com o Maven (com profile e variáveis de ambiente):
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod -DDATASOURCE_URL=jdbc:postgresql://localhost:5432/library -DDATASOURCE_USERNAME=postgres -DDATASOURCE_PASSWORD=postgres

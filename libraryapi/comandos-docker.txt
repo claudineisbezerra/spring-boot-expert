@@ -1,16 +1,85 @@
-Check port:
+#CONTAINERS DOCKER ---------------------------------------------------------------
 
-netstat -aof | findstr 5432
+#List all containers:
+docker ps
+docker ps -a
 
-# Create Network
+#Stop container:
+docker stop librarydb pgadmin4
 
-docker create network library-network
+#Start container:
+docker start librarydb pgadmin4
 
-# Rodar container Postgre na versão 16.3
-docker run --name librarydb -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=library -p 5432:5432 -d --network library-network postgres:16.3
+#Remove container:
+docker rm librarydb pgadmin4
 
-# Rodar Pgadmin 4
-docker run --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin -p 15432:80 -d --network library-network dpage/pgadmin4:8.9
+#Check services and ports used in the system:
+netstat -aof | findstr 5432 // Windows command
+netstat -tuln | grep 5432   // Linux command
 
-#Rodar na AWS
-sudo docker run --name libraryapi -e DATASOURCE_URL=jdbc:postgresql://host:5432/library -e DATASOURCE_USERNAME=postgres -e DATASOURCE_PASSWORD=postgres -p 8080:8080 -p 9090:9090 cursosdevbase/libraryapi
+# Create docker network
+docker network create library-network
+
+#Create and run docker with PostgreSQL 17.2 image to DEVELOPMENT:
+docker run --name librarydb  -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=library -p 5432:5432 --network library-network -d postgres:17.2
+
+#Create and run docker with PostgreSQL 17.2 image to PRODUCTION:
+docker run --name librarydb-prod  -e POSTGRES_USER=postgresprod -e POSTGRES_PASSWORD=postgresprod -e POSTGRES_DB=library -p 5433:5432 --network library-network -d postgres:17.2
+
+# Create and run container Pgadmin 4 na versão latest (8.13 at the time of execution)
+docker run --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin -p 15432:80 --network library-network -d dpage/pgadmin4:8.13
+
+#IMAGENS DOCKER ---------------------------------------------------------------
+#Construir/Criar (build) imagem docker a partir de um Dockerfile para a aplicação libraryapi
+docker build -tag <nome:tag da imagem> <caminho do dockerfile>
+docker build -tag claudineisbezerra/libraryapi .
+
+#Executar imagem docker
+docker run --name libraryapi -d  -p 8080:8080 -p 9090:9090 claudineisbezerra/libraryapi
+
+#Listar imagens docker
+docker images
+
+#Remover imagem docker
+docker rmi <nome:tag da imagem>
+docker rmi claudineisbezerra/libraryapi
+
+#Baixar imagem docker
+docker pull <nome:tag da imagem>
+docker pull claudineisbezerra/libraryapi
+
+#Enviar imagem docker para o registry do dockerhub
+docker push <nome:tag da imagem>
+
+docker login
+docker push claudineisbezerra/libraryapi:latest
+
+docker push claudineisbezerra/libraryapi:1.0.0
+
+# Create and run container libraryapi versão latest para DESENVOLVIMENTO
+sudo docker run --name libraryapi -e DATASOURCE_URL=jdbc:postgresql://localhost:5432/library -e DATASOURCE_USERNAME=postgres -e DATASOURCE_PASSWORD=postgres --network library-network -d  -p 8080:8080 -p 9090:9090 claudineisbezerra/libraryapi
+
+# Create and run container libraryapi versão latest para PRODUÇÃO
+sudo docker run --name libraryapi-production -e DATASOURCE_URL=jdbc:postgresql://librarydb-prod:5432/library -e DATASOURCE_USERNAME=postgresprod -e DATASOURCE_PASSWORD=postgresprod --network library-network -d  -p 8081:8080 -p 9091:9090 claudineisbezerra/libraryapi
+
+#Remove container libraryapi and libraryapi-production
+docker stop libraryapi
+docker rm libraryapi libraryapi-production
+
+# Create a docker TAG for the image libraryapi to be registered at dockerhub
+docker stop libraryapi-production
+docker tag claudineisbezerra/libraryapi claudineisbezerra/libraryapi:latest
+
+#Send image to dockerhub
+docker login
+docker push claudineisbezerra/libraryapi
+
+#Preparar ambiente EC2 da AWS
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo docker --version
+sudo docker ps
+
+#Rodar docker na AWS
+sudo docker run --name libraryapi -e DATASOURCE_URL=jdbc:postgresql://library-database.c3cqsioossb3.us-east-2.rds.amazonaws.com:5432/library -e DATASOURCE_USERNAME=postgres -e DATASOURCE_PASSWORD=postgres -p 8080:8080 -p 9090:9090 claudineisbezerra/libraryapi

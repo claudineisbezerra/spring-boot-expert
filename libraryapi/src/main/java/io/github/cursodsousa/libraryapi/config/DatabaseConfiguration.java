@@ -53,7 +53,7 @@ public class DatabaseConfiguration {
         config.setMinimumIdle(1); // tamanho inicial do pool
         config.setPoolName("library-db-pool");
         config.setMaxLifetime(600000); // 600 mil ms (10 minutos)
-        config.setConnectionTimeout(100000); // timeout para conseguir uma conexão
+        config.setConnectionTimeout(100000); // (1,66 minutos) timeout para conseguir uma conexão
         config.setConnectionTestQuery("select 1"); // query de teste
 
         return new HikariDataSource(config);

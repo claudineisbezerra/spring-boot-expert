@@ -1,0 +1,23 @@
+#Git and Github
+
+// Criação de repositório git
+git init
+
+// Adicionar arquivos ao repositório git
+git add .
+
+// Verificar status dos arquivos no repositório git
+git status
+
+// Adicionar configurações globais do git
+git config --global user.email "claudineisbezerra@gmail.com"
+git config --global user.name "Claudinei Bezerra"
+
+// Listar configurações globais do git
+git config --global --list
+
+// Commitar arquivos no repositório git
+git commit -m "Initial commit"
+
+
+

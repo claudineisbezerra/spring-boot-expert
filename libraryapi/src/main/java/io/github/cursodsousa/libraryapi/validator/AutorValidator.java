@@ -10,10 +10,10 @@ import java.util.Optional;
 @Component
 public class AutorValidator {
 
-    private AutorRepository repository;
+    private AutorRepository autorRepository;
 
     public AutorValidator(AutorRepository repository) {
-        this.repository = repository;
+        this.autorRepository = repository;
     }
 
     public void validar(Autor autor){
@@ -23,7 +23,7 @@ public class AutorValidator {
     }
 
     private boolean existeAutorCadastrado(Autor autor){
-        Optional<Autor> autorEncontrado = repository.findByNomeAndDataNascimentoAndNacionalidade(
+        Optional<Autor> autorEncontrado = autorRepository.findByNomeAndDataNascimentoAndNacionalidade(
                 autor.getNome(), autor.getDataNascimento(), autor.getNacionalidade()
         );
 

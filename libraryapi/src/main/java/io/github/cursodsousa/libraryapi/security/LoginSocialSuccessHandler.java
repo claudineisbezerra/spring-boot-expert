@@ -2,14 +2,12 @@ package io.github.cursodsousa.libraryapi.security;
 
 import io.github.cursodsousa.libraryapi.model.Usuario;
 import io.github.cursodsousa.libraryapi.service.UsuarioService;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -23,6 +21,7 @@ import java.util.List;
 public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private static final String SENHA_PADRAO = "321";
+    private static final String ROLE_PADRAO = "OPERADOR";
 
     private final UsuarioService usuarioService;
 
@@ -45,6 +44,7 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         authentication = new CustomAuthentication(usuario);
 
+        // Update authentication object in the Spring SecurityContext after getting the user from the Google API
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         super.onAuthenticationSuccess(request, response, authentication);
@@ -55,16 +55,16 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
         usuario = new Usuario();
         usuario.setEmail(email);
 
-        usuario.setLogin(obterLoginApartirEmail(email));
+        usuario.setLogin(obterLoginDoEmail(email));
 
         usuario.setSenha(SENHA_PADRAO);
-        usuario.setRoles(List.of("OPERADOR"));
+        usuario.setRoles(List.of(ROLE_PADRAO));
 
         usuarioService.salvar(usuario);
         return usuario;
     }
 
-    private String obterLoginApartirEmail(String email) {
+    private String obterLoginDoEmail(String email) {
         return email.substring(0, email.indexOf("@"));
     }
 }

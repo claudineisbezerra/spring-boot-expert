@@ -6,7 +6,6 @@ import io.github.cursodsousa.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,27 +18,37 @@ import java.util.UUID;
 public class AutorRepositoryTest {
 
     @Autowired
-    AutorRepository repository;
+    AutorRepository autorRepository;
 
     @Autowired
     LivroRepository livroRepository;
 
     @Test
     public void salvarTest(){
-        Autor autor = new Autor();
-        autor.setNome("José");
-        autor.setNacionalidade("Brasileira");
-        autor.setDataNascimento(LocalDate.of(1951, 1, 31));
+        Autor joao = new Autor();
+        joao.setNome("João");
+        joao.setNacionalidade("Brasileiro");
+        joao.setDataNascimento(LocalDate.of(1950, 3, 31));
 
-        var autorSalvo = repository.save(autor);
-        System.out.println("Autor Salvo: " + autorSalvo);
+        Autor maria = new Autor();
+        maria.setNome("Maria");
+        maria.setNacionalidade("Brasileira");
+        maria.setDataNascimento(LocalDate.of(1951, 1, 31));
+
+
+        var joaoSalvo = autorRepository.save(joao);
+        System.out.println("Autor João Salvo: " + joaoSalvo);
+
+        var mariaSalvo = autorRepository.save(maria);
+        System.out.println("Autor Maria Salvo: " + mariaSalvo);
     }
+
 
     @Test
     public void atualizarTest(){
-        var id = UUID.fromString("2449f4e4-ee1a-4a71-8aa3-e9d46306fe8a");
+        var id = UUID.fromString("4210c1d5-17c3-4dbb-9070-2f832a9a361b");
 
-        Optional<Autor> possivelAutor = repository.findById(id);
+        Optional<Autor> possivelAutor = autorRepository.findById(id);
 
         if(possivelAutor.isPresent()){
 
@@ -49,74 +58,92 @@ public class AutorRepositoryTest {
 
             autorEncontrado.setDataNascimento(LocalDate.of(1960, 1, 30));
 
-            repository.save(autorEncontrado);
+            autorRepository.save(autorEncontrado);
 
         }
     }
 
     @Test
     public void listarTest(){
-        List<Autor> lista = repository.findAll();
+        List<Autor> lista = autorRepository.findAll();
         lista.forEach(System.out::println);
     }
 
     @Test
     public void countTest(){
-        System.out.println("Contagem de autores: " + repository.count());
+        System.out.println("Contagem de autores: " + autorRepository.count());
     }
 
     @Test
     public void deletePorIdTest(){
-        var id = UUID.fromString("2449f4e4-ee1a-4a71-8aa3-e9d46306fe8a");
-        repository.deleteById(id);
+        var id = UUID.fromString("a4d8a190-1a05-4de5-951e-1eb8d777e1c5");
+        autorRepository.deleteById(id);
     }
 
     @Test
     public void deleteTest(){
         var id = UUID.fromString("abc082bf-1d23-4767-b3d9-9f322856ca6a");
-        var maria = repository.findById(id).get();
-        repository.delete(maria);
+        var maria = autorRepository.findById(id).get();
+        autorRepository.delete(maria);
     }
 
     @Test
     void salvarAutorComLivrosTest(){
         Autor autor = new Autor();
-        autor.setNome("Antonio");
-        autor.setNacionalidade("Americana");
-        autor.setDataNascimento(LocalDate.of(1970, 8, 5));
+        autor.setNome("Antonio Houaiss");
+        autor.setNacionalidade("Brasileira");
+        autor.setDataNascimento(LocalDate.of(1915, 10, 15));
 
         Livro livro = new Livro();
-        livro.setIsbn("20847-84874");
+        livro.setIsbn("20847-84801");
         livro.setPreco(BigDecimal.valueOf(204));
-        livro.setGenero(GeneroLivro.MISTERIO);
-        livro.setTitulo("O roubo da casa assombrada");
-        livro.setDataPublicacao(LocalDate.of(1999, 1, 2));
+        livro.setGenero(GeneroLivro.CIENCIA);
+        livro.setTitulo("Dicionário Houaiss da Língua Portuguesa");
+        livro.setDataPublicacao(LocalDate.of(2001, 1, 2));
         livro.setAutor(autor);
 
         Livro livro2 = new Livro();
-        livro2.setIsbn("99999-84874");
+        livro2.setIsbn("99999-84802");
         livro2.setPreco(BigDecimal.valueOf(650));
-        livro2.setGenero(GeneroLivro.MISTERIO);
-        livro2.setTitulo("O roubo da casa assombrada");
-        livro2.setDataPublicacao(LocalDate.of(2000, 1, 2));
+        livro2.setGenero(GeneroLivro.CIENCIA);
+        livro2.setTitulo("Dicionário inglês-português");
+        livro2.setDataPublicacao(LocalDate.of(2005, 1, 2));
         livro2.setAutor(autor);
+
+        Livro livro3 = new Livro();
+        livro3.setIsbn("99999-84803");
+        livro3.setPreco(BigDecimal.valueOf(350));
+        livro3.setGenero(GeneroLivro.CIENCIA);
+        livro3.setTitulo("A nova ortografia da lingua Portuguesa");
+        livro3.setDataPublicacao(LocalDate.of(1991, 1, 2));
+        livro3.setAutor(autor);
+
+        Livro livro4 = new Livro();
+        livro4.setIsbn("99999-84804");
+        livro4.setPreco(BigDecimal.valueOf(450));
+        livro4.setGenero(GeneroLivro.CIENCIA);
+        livro4.setTitulo("A nova ortografia da lingua Portuguesa");
+        livro4.setDataPublicacao(LocalDate.of(1991, 1, 2));
+        livro4.setAutor(autor);
+
 
         autor.setLivros(new ArrayList<>());
         autor.getLivros().add(livro);
         autor.getLivros().add(livro2);
+        autor.getLivros().add(livro3);
+        autor.getLivros().add(livro4);
 
-        repository.save(autor);
-
+        autorRepository.save(autor);
 //        livroRepository.saveAll(autor.getLivros());
     }
 
     @Test
     void listarLivrosAutor(){
-        var id = UUID.fromString("66c0d599-16d9-4edd-b8f8-7cac168eabb5");
-        var autor = repository.findById(id).get();
+        var id = UUID.fromString("0f7eadb0-7698-4776-9495-6c377394d38a");
 
-        // buscar os livros do autor
+        var autor = autorRepository.findById(id).get();
 
+        // buscar os livros do autor manualmente
         List<Livro> livrosLista = livroRepository.findByAutor(autor);
         autor.setLivros(livrosLista);
 

@@ -13,23 +13,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("livros")
 @RequiredArgsConstructor
 public class LivroController implements GenericController {
 
-    private final LivroService service;
+    private final LivroService livroService;
     private final LivroMapper mapper;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Void> salvar(@RequestBody @Valid CadastroLivroDTO dto) {
         Livro livro = mapper.toEntity(dto);
-        service.salvar(livro);
+        livroService.salvar(livro);
         var url = gerarHeaderLocation(livro.getId());
         return ResponseEntity.created(url).build();
     }
@@ -37,20 +35,20 @@ public class LivroController implements GenericController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<ResultadoPesquisaLivroDTO> obterDetalhes(
-            @PathVariable("id") String id){
-        return service.obterPorId(UUID.fromString(id))
+            @PathVariable("id") String id) {
+        return livroService.obterPorId(UUID.fromString(id))
                 .map(livro -> {
                     var dto = mapper.toDTO(livro);
                     return ResponseEntity.ok(dto);
-                }).orElseGet( () -> ResponseEntity.notFound().build() );
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
-    public ResponseEntity<Object> deletar(@PathVariable("id") String id){
-        return service.obterPorId(UUID.fromString(id))
+    public ResponseEntity<Object> deletar(@PathVariable("id") String id) {
+        return livroService.obterPorId(UUID.fromString(id))
                 .map(livro -> {
-                    service.deletar(livro);
+                    livroService.deletar(livro);
                     return ResponseEntity.noContent().build();
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -60,20 +58,26 @@ public class LivroController implements GenericController {
     public ResponseEntity<Page<ResultadoPesquisaLivroDTO>> pesquisa(
             @RequestParam(value = "isbn", required = false)
             String isbn,
+
             @RequestParam(value = "titulo", required = false)
             String titulo,
+
             @RequestParam(value = "nome-autor", required = false)
             String nomeAutor,
+
             @RequestParam(value = "genero", required = false)
             GeneroLivro genero,
+
             @RequestParam(value = "ano-publicacao", required = false)
             Integer anoPublicacao,
+
             @RequestParam(value = "pagina", defaultValue = "0")
             Integer pagina,
+
             @RequestParam(value = "tamanho-pagina", defaultValue = "10")
             Integer tamanhoPagina
-    ){
-        Page<Livro> paginaResultado = service.pesquisa(
+    ) {
+        Page<Livro> paginaResultado = livroService.pesquisa(
                 isbn, titulo, nomeAutor, genero, anoPublicacao, pagina, tamanhoPagina);
 
         Page<ResultadoPesquisaLivroDTO> resultado = paginaResultado.map(mapper::toDTO);
@@ -84,8 +88,8 @@ public class LivroController implements GenericController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> atualizar(
-            @PathVariable("id") String id, @RequestBody @Valid CadastroLivroDTO dto){
-        return service.obterPorId(UUID.fromString(id))
+            @PathVariable("id") String id, @RequestBody @Valid CadastroLivroDTO dto) {
+        return livroService.obterPorId(UUID.fromString(id))
                 .map(livro -> {
                     Livro entidadeAux = mapper.toEntity(dto);
 
@@ -96,11 +100,11 @@ public class LivroController implements GenericController {
                     livro.setTitulo(entidadeAux.getTitulo());
                     livro.setAutor(entidadeAux.getAutor());
 
-                    service.atualizar(livro);
+                    livroService.atualizar(livro);
 
                     return ResponseEntity.noContent().build();
 
-                }).orElseGet( () -> ResponseEntity.notFound().build() );
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

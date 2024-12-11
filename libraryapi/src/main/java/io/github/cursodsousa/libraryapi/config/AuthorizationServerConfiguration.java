@@ -72,6 +72,7 @@ public class AuthorizationServerConfiguration {
                 .build();
     }
 
+    // Tela de consentimento: Tela de autorizações do Google
     @Bean
     public ClientSettings clientSettings(){
         return ClientSettings.builder()
@@ -80,6 +81,7 @@ public class AuthorizationServerConfiguration {
     }
 
     // JWK - JSON Web Key
+    // Gerar o token de acesso e o token de atualização (refresh_token) JWK
     @Bean
     public JWKSource<SecurityContext> jwkSource() throws Exception {
         RSAKey rsaKey = gerarChaveRSA();
@@ -87,7 +89,7 @@ public class AuthorizationServerConfiguration {
         return new ImmutableJWKSet<>(jwkSet);
     }
 
-    // Gerar par de chaves RSA
+    // Gerar par de chaves RSA ( Publica e Privada )
     private RSAKey gerarChaveRSA() throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
@@ -120,8 +122,8 @@ public class AuthorizationServerConfiguration {
                 // authorization endpoint
                 .authorizationEndpoint("/oauth2/authorize")
                 // informacoes do usuario OPEN ID CONNECT
-                .oidcUserInfoEndpoint("/oauth2/iserinfo")
-                // obter a chave publica pra verificar a asstinatura do token
+                .oidcUserInfoEndpoint("/oauth2/userinfo")
+                // obter a chave publica pra verificar a assinatura do token
                 .jwkSetEndpoint("/oauth2/jwks")
                 // logout
                 .oidcLogoutEndpoint("/oauth2/logout")

@@ -1,0 +1,10 @@
+.gitignore
+Dockerfile
+comandos-docker.txt
+oauth2.txt
+docker-compose.yml
+libraryapi.iml
+libraryapi.ipr
+libraryapi.iws
+pom.xml
+requisitos.txt

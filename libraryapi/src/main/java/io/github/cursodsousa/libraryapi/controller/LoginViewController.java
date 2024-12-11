@@ -15,6 +15,7 @@ public class LoginViewController {
         return "login";
     }
 
+    // Comes from Google (Social Authentication)
     @GetMapping("/")
     @ResponseBody
     public String paginaHome(Authentication authentication){

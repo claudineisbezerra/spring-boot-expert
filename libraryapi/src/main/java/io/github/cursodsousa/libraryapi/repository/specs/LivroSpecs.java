@@ -29,6 +29,10 @@ public class LivroSpecs {
                         root.get("dataPublicacao"), cb.literal("YYYY")),anoPublicacao.toString());
     }
 
+//    select *
+//    from livro as l
+//    join autor as a on l.id_autor = a.id
+//    where upper(a.nome) like (%:param%)
     public static Specification<Livro> nomeAutorLike(String nome){
         return (root, query, cb) -> {
             Join<Object, Object> joinAutor = root.join("autor", JoinType.INNER);

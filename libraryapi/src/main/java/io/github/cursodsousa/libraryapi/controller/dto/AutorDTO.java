@@ -12,16 +12,19 @@ import java.util.UUID;
 @Schema(name = "Autor")
 public record AutorDTO(
         UUID id,
-        @NotBlank(message = "campo obrigatorio")
-        @Size(min = 2, max = 100, message = "campo fora do tamanho padrao")
+
+        @NotBlank(message = "campo obrigatório")
+        @Size(min = 2, max = 100, message = "campo fora do tamanho padrão")
         @Schema(name = "nome")
         String nome,
-        @NotNull(message = "campo obrigatorio")
-        @Past(message = "nao pode ser uma data futura")
+
+        @NotNull(message = "campo obrigatório")
+        @Past(message = "não pode ser uma data futura")
         @Schema(name = "dataNascimento")
         LocalDate dataNascimento,
-        @NotBlank(message = "campo obrigatorio")
-        @Size(max = 50, min = 2, message = "campo fora do tamanho padrao")
+
+        @NotBlank(message = "campo obrigatório")
+        @Size(max = 50, min = 2, message = "campo fora do tamanho padrão")
         @Schema(name = "nacionalidade")
         String nacionalidade
 ) {

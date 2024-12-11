@@ -1,3 +1,8 @@
+drop table livro;
+drop table autor;
+drop table usuario;
+drop table client;
+
 create table autor(
   id uuid not null primary key,
   nome varchar(100) not null,
@@ -22,6 +27,12 @@ create table livro (
    constraint chk_genero check (genero in ('FICCAO', 'FANTASIA', 'MISTERIO','ROMANCE', 'BIOGRAFIA', 'CIENCIA') )
 );
 
+
+-- Join select
+select livro.id as idLivro, livro.titulo, livro.data_publicacao, autor.id as idAutor, autor.nome
+from livro, autor
+where autor.id = livro.id_autor
+
 -- deleta tabela usuario
 drop table usuario;
 
@@ -44,17 +55,42 @@ CREATE TABLE client(
    scope varchar(50)
 );
 
+-- Adiciona a extensão do PostGres para gerar UUID
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Insere um usuário na tabela para iniciar configurações de segurança (senha: admin123)
 insert into usuario
 (id, login, senha, email, roles)
 values
-( uuid_generate_v4(), 'gerente', '$2a$12$u./yCEmhTdXjlyvV80sQKOfmO1Ab9HfI7HrOu6dzNa9hkdB5p9A6u
-', 'gerente@email.com', '{GERENTE}' );
+( uuid_generate_v4(),
+'gerente',
+'$2a$12$rXfS77R9qP1gOQZN1ykyguxoTynDCGwtO.keaUjA6aV1BQouzN8QW',
+'claudineisbezerra@gmail.com',
+'{GERENTE}' );
 
-
+-- Insere um cliente para iniciar configurações de segurança (client_secret: admin123)
 insert into client
 (id, client_id, client_secret, redirect_uri, scope)
 values
-( uuid_generate_v4(), 'client-production', '$2a$12$rQP5KtueNXW4oahOUBYQF.ax/GSucZlPr/ohMeC9ur747lEEnQIYu
-','http://localhost:8080/authorized' , 'GERENTE');
+( uuid_generate_v4(),
+'client-production',
+'$2a$12$tb98GOQv2pDiFSSKd4jFOuX9jpDZr7kBjMB/9Pr0wz2vDQsqyAzZa',
+'http://localhost:8080/authorized' ,
+'GERENTE');
+
+
+-- Insere um cliente para iniciar configurações de segurança (client_secret: secret-production)
+insert into usuario
+(id, login, senha, email, roles)
+values
+( uuid_generate_v4(),
+'gerente',
+'$2a$12$gXz7MInbj2X56sTPjm/C7O2EKNmWBZnBCfmmGkMS/jYkcOet13Fja',
+'gerente@email.com',
+'{GERENTE}' );
+
+
+
+
+--URL para obter Authorization code manualmente
+http://localhost:8080/oauth2/authorize?response_type=code&client_id=meu-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauthorized&continue
