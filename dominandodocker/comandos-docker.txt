@@ -1,0 +1,80 @@
+#List all images
+docker images
+
+#Download latest docker image version of MySql from dockerhub
+docker pull mysql
+
+#Start MySql server instance
+docker run 
+--name <nome do container> 
+-p <porta> 
+-e <variável de ambiente> 
+-d (modo daemon)
+-it (modo iterativo)
+-rm (remover ao finalizar - oprional) 
+<nome da imagem>:<tag>
+
+docker run --name cd-mysql-latest -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql
+
+docker run --name cd-mysql-5 -e MYSQL_ROOT_PASSWORD=root -d -p 3307:3306 mysql:5.7.39
+
+#List all containers:
+docker ps
+docker ps -a
+
+#Stop container:
+docker stop cd-mysql-5
+docker stop a5f3c6476829
+docker stop librarydb pgadmin4
+
+#Start container:
+docker start cd-mysql-5
+docker start librarydb pgadmin4
+
+
+#Remove container:
+docker rm librarydb pgadmin4
+docker container rm cd-mysql-5
+
+
+#Check services and ports used in the system:
+netstat -aof | findstr 5432 // Windows command
+netstat -tuln | grep 5432   // Linux command
+
+# Create docker Network
+docker  network create library-network
+
+#Create and run docker with PostgreSQL 17.2 image to DEVELOPMENT:
+docker run --name librarydb  -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=library -p 5432:5432 --network library-network -d postgres:17.2
+
+#Create and run docker with PostgreSQL 17.2 image to PRODUCTION:
+docker run --name librarydb-prod  -e POSTGRES_USER=postgresprod -e POSTGRES_PASSWORD=postgresprod -e POSTGRES_DB=library -p 5433:5432 --network library-network -d postgres:17.2
+
+# Create and run container Pgadmin 4 na versão latest (8.13 at the time of execution)
+docker run --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin -p 15432:80 --network library-network -d dpage/pgadmin4:8.13
+
+#Construir (build) de imagem docker a partir de um Dockerfile para a aplicação libraryapi
+docker build -t claudineisbezerra/libraryapi .
+
+# Create and run container libraryapi versão latest para produção (recém criado)
+sudo docker run --name libraryapi-production -e DATASOURCE_URL=jdbc:postgresql://librarydb-prod:5432/library -e DATASOURCE_USERNAME=postgresprod -e DATASOURCE_PASSWORD=postgresprod --network library-network -d  -p 8080:8080 -p 9090:9090 claudineisbezerra/libraryapi
+
+# Create a docker TAG for the image libraryapi to be registered at dockerhub
+docker tag claudineisbezerra/libraryapi claudineisbezerra/libraryapi:latest
+
+#Send image to dockerhub
+docker login
+docker push claudineisbezerra/libraryapi
+
+#Listar imagens docker
+docker images
+
+#Preparar ambiente EC2 da AWS
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo docker --version
+sudo docker ps
+
+#Rodar docker na AWS
+sudo docker run --name libraryapi -e DATASOURCE_URL=jdbc:postgresql://library-database.c3cqsioossb3.us-east-2.rds.amazonaws.com:5432/library -e DATASOURCE_USERNAME=postgres -e DATASOURCE_PASSWORD=postgres -p 8080:8080 -p 9090:9090 claudineisbezerra/libraryapi
