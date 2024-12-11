@@ -19,7 +19,7 @@ git config --global --list
 // Commitar arquivos no repositório git
 git commit -m "Initial commit"
 
-// Verificar a lista de repositórios remotos
+//  Verificar a lista de repositórios remotos
 git remote -v
 
 // Publicar repositório no github

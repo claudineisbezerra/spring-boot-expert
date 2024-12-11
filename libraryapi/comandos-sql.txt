@@ -58,7 +58,7 @@ CREATE TABLE client(
 -- Adiciona a extensão do PostGres para gerar UUID
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Insere um usuário na tabela para iniciar configurações de segurança (senha: admin123)
+-- Insere um novo usuário na tabela para iniciar configurações de segurança (senha: admin123)
 insert into usuario
 (id, login, senha, email, roles)
 values
