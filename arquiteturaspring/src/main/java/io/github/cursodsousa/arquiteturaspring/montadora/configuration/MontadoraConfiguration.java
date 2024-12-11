@@ -33,6 +33,7 @@ public class MontadoraConfiguration {
         return motor;
     }
 
+//    @Primary - This annotation is used to give priority to a bean when there are multiple beans of the same type
     @Primary
     @Bean(name = "motorTurbo")
     public Motor motorTurbo(){
